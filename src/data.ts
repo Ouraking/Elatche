@@ -1,12 +1,28 @@
-import type { Habit, Quote, TimerMode, TimerModeConfig, Video } from './types';
+import type { Habit, Quote, Settings, TimerMode, TimerModeConfig, Video } from './types';
 
 export const TIMER_MODES: Record<TimerMode, TimerModeConfig> = {
-  focus: { label: 'Focus · 25', tabLabel: 'Focus', minutes: 25 },
-  short: { label: 'Break · 5', tabLabel: 'Break', minutes: 5 },
-  long: { label: 'Long · 15', tabLabel: 'Long Break', minutes: 15 },
+  focus: { label: 'Focus', tabLabel: 'Focus', minutes: 25 },
+  short: { label: 'Break', tabLabel: 'Break', minutes: 5 },
+  long: { label: 'Long', tabLabel: 'Long Break', minutes: 15 },
 };
 
 export const TIMER_MODE_ORDER: readonly TimerMode[] = ['focus', 'short', 'long'];
+
+export const DEFAULT_SETTINGS: Settings = {
+  focusMin: 25,
+  shortMin: 5,
+  longMin: 15,
+  autoStart: false,
+  notify: false,
+  dailyGoalMin: 0,
+};
+
+/** Timer durations (minutes per mode) derived from settings. */
+export const durationsFrom = (s: Settings): Record<TimerMode, number> => ({
+  focus: s.focusMin,
+  short: s.shortMin,
+  long: s.longMin,
+});
 
 export const DEFAULT_HABITS: readonly Habit[] = [
   { id: 'deep', label: 'Deep Work Block Completed', hint: '90 minutes, no context switching', fixed: true },

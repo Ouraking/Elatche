@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { dateKey } from '../lib/date';
+import { useMemo, type CSSProperties } from 'react';
+import { dateKey, todayKey } from '../lib/date';
 import { dayScore } from '../lib/stats';
 import type { DayEntry } from '../types';
 
@@ -59,7 +59,7 @@ export function Consistency({ days }: ConsistencyProps) {
             </svg>
           </span>
           <div>
-            <h2 className="font-display text-lg font-semibold text-white">Consistency</h2>
+            <h2 className="font-display text-lg font-semibold text-strong">Consistency</h2>
             <p className="text-xs text-muted">Last {WEEKS} weeks. Every square is a day you showed up.</p>
           </div>
         </div>
@@ -73,13 +73,18 @@ export function Consistency({ days }: ConsistencyProps) {
       </div>
 
       <div className="grid grid-flow-col grid-rows-7 gap-[4px] overflow-x-auto pb-1">
-        {cells.map((cell) => (
+        {cells.map((cell, i) => (
           <span
             key={cell.key}
-            className="hm"
+            className={`hm ${cell.key === todayKey() ? 'hm-today' : ''}`}
             data-l={cell.level || undefined}
             title={cell.title}
-            style={cell.spacer ? { visibility: 'hidden' } : undefined}
+            style={
+              {
+                ...(cell.spacer ? { visibility: 'hidden' } : {}),
+                '--i': String(i),
+              } as CSSProperties
+            }
           />
         ))}
       </div>

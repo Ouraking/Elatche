@@ -10,7 +10,7 @@ interface Particle {
   color: string;
 }
 
-const COLORS = ['#3b82f6', '#60a5fa', '#22d3ee', '#a5b4fc', '#ffffff'];
+const COLORS = ['#17406b', '#2f6394', '#2dd4bf', '#e8b64c', '#8ed4ca'];
 const LIFETIME_MS = 1800;
 
 /** Fire a celebratory burst on a self-removing full-screen canvas. */

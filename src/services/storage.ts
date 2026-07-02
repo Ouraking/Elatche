@@ -1,5 +1,5 @@
-import { DEFAULT_HABITS } from '../data';
-import type { AppState, DayEntry, Habit } from '../types';
+import { DEFAULT_HABITS, DEFAULT_SETTINGS } from '../data';
+import type { AppState, DayEntry, Habit, Settings, Task } from '../types';
 
 /**
  * Type-safe localStorage facade. Every read is parsed, validated against a
@@ -49,6 +49,9 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
 const isHabit = (v: unknown): v is Habit =>
   isRecord(v) && typeof v.id === 'string' && typeof v.label === 'string';
 
+const isTask = (v: unknown): v is Task =>
+  isRecord(v) && typeof v.id === 'string' && typeof v.label === 'string' && typeof v.done === 'boolean';
+
 const isStringArray = (v: unknown): v is string[] =>
   Array.isArray(v) && v.every((x) => typeof x === 'string');
 
@@ -93,22 +96,99 @@ function migrateV1(): Record<string, DayEntry> {
   return { [date]: entry };
 }
 
-export function loadAppState(): AppState {
-  const raw = storage.read<unknown>(STATE_KEY, null);
-
-  if (isRecord(raw) && isRecord(raw.days)) {
-    const habits = Array.isArray(raw.habits) ? raw.habits.filter(isHabit) : [];
-    const days: Record<string, DayEntry> = {};
-    for (const [key, value] of Object.entries(raw.days)) {
-      const entry = normalizeDayEntry(value);
-      if (entry) days[key] = entry;
-    }
-    return { habits: habits.length > 0 ? habits : [...DEFAULT_HABITS], days };
+function normalizeAppState(raw: unknown): AppState | null {
+  if (!isRecord(raw) || !isRecord(raw.days)) return null;
+  const habits = Array.isArray(raw.habits) ? raw.habits.filter(isHabit) : [];
+  const tasks = Array.isArray(raw.tasks) ? raw.tasks.filter(isTask) : [];
+  const days: Record<string, DayEntry> = {};
+  for (const [key, value] of Object.entries(raw.days)) {
+    const entry = normalizeDayEntry(value);
+    if (entry) days[key] = entry;
   }
+  const state: AppState = { habits: habits.length > 0 ? habits : [...DEFAULT_HABITS], days, tasks };
+  if (typeof raw.focusTaskId === 'string') state.focusTaskId = raw.focusTaskId;
+  return state;
+}
 
-  return { habits: [...DEFAULT_HABITS], days: migrateV1() };
+export function loadAppState(): AppState {
+  const normalized = normalizeAppState(storage.read<unknown>(STATE_KEY, null));
+  if (normalized) return normalized;
+  return { habits: [...DEFAULT_HABITS], days: migrateV1(), tasks: [] };
 }
 
 export function saveAppState(state: AppState): void {
   storage.write(STATE_KEY, state);
+}
+
+/* ---------- Theme ---------- */
+
+export type Theme = 'light' | 'dark';
+
+const THEME_KEY = 'elatche.theme';
+
+export function loadTheme(): Theme {
+  return storage.read<Theme>(THEME_KEY, 'light', (v): v is Theme => v === 'light' || v === 'dark');
+}
+
+export function saveTheme(theme: Theme): void {
+  storage.write(THEME_KEY, theme);
+}
+
+/* ---------- Settings ---------- */
+
+const SETTINGS_KEY = 'elatche.settings';
+
+const clampMin = (v: unknown, fallback: number, max: number): number =>
+  typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(1, Math.round(v))) : fallback;
+
+function normalizeSettings(raw: unknown): Settings {
+  if (!isRecord(raw)) return { ...DEFAULT_SETTINGS };
+  return {
+    focusMin: clampMin(raw.focusMin, DEFAULT_SETTINGS.focusMin, 180),
+    shortMin: clampMin(raw.shortMin, DEFAULT_SETTINGS.shortMin, 60),
+    longMin: clampMin(raw.longMin, DEFAULT_SETTINGS.longMin, 90),
+    autoStart: raw.autoStart === true,
+    notify: raw.notify === true,
+    dailyGoalMin:
+      typeof raw.dailyGoalMin === 'number' && Number.isFinite(raw.dailyGoalMin)
+        ? Math.min(1440, Math.max(0, Math.round(raw.dailyGoalMin)))
+        : DEFAULT_SETTINGS.dailyGoalMin,
+  };
+}
+
+export function loadSettings(): Settings {
+  return normalizeSettings(storage.read<unknown>(SETTINGS_KEY, null));
+}
+
+export function saveSettings(settings: Settings): void {
+  storage.write(SETTINGS_KEY, settings);
+}
+
+/* ---------- Backup: export / import ---------- */
+
+export interface Backup {
+  state: AppState;
+  settings: Settings;
+  theme: Theme;
+}
+
+export function exportBackup(state: AppState, settings: Settings, theme: Theme): string {
+  return JSON.stringify({ app: 'elatche', version: 2, state, settings, theme }, null, 2);
+}
+
+/** Parse a backup file. Returns null if it isn't a valid Elatche backup. */
+export function parseBackup(json: string): Backup | null {
+  try {
+    const raw: unknown = JSON.parse(json);
+    if (!isRecord(raw) || raw.app !== 'elatche') return null;
+    const state = normalizeAppState(raw.state);
+    if (!state) return null;
+    return {
+      state,
+      settings: normalizeSettings(raw.settings),
+      theme: raw.theme === 'dark' ? 'dark' : 'light',
+    };
+  } catch {
+    return null;
+  }
 }

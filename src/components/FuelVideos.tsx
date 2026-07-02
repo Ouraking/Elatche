@@ -46,7 +46,7 @@ function VideoCard({ video }: { video: Video }) {
       </div>
       <div className="flex items-center justify-between gap-3 p-4">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">{video.title}</p>
+          <p className="truncate text-sm font-semibold text-strong">{video.title}</p>
           <p className="truncate text-xs text-muted">{video.author}</p>
         </div>
         <a
@@ -54,7 +54,7 @@ function VideoCard({ video }: { video: Video }) {
           target="_blank"
           rel="noopener noreferrer"
           title="Open on YouTube"
-          className="press shrink-0 rounded-lg border border-white/[0.08] px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:border-accent/50 hover:text-white"
+          className="press shrink-0 rounded-lg border border-hairline-strong px-2.5 py-1.5 text-xs font-semibold text-fg hover:border-accent/50 hover:text-strong"
         >
           ↗
         </a>
@@ -75,7 +75,7 @@ export function FuelVideos() {
             </svg>
           </span>
           <div>
-            <h2 className="font-display text-lg font-semibold text-white">Fuel</h2>
+            <h2 className="font-display text-lg font-semibold text-strong">Fuel</h2>
             <p className="text-xs text-muted">Watch one. Then close the tab and go do the work.</p>
           </div>
         </div>

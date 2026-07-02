@@ -41,16 +41,24 @@ export function HabitTracker({ habits, doneIds, onToggle, onAdd, onRemove }: Hab
             </svg>
           </span>
           <div>
-            <h2 className="font-display text-lg font-semibold text-white">Daily Rituals</h2>
+            <h2 className="font-display text-lg font-semibold text-strong">Daily Rituals</h2>
             <p className="text-xs text-muted">Small reps. Compounded.</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="font-mono text-sm font-bold text-white">
+          <p className="font-mono text-sm font-bold text-strong">
             {doneIds.length}/{habits.length}
           </p>
           <p className="text-[11px] text-muted">done</p>
         </div>
+      </div>
+
+      {/* Live completion bar */}
+      <div className="mb-5 h-1 overflow-hidden rounded-full bg-ink/80">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-accent-glow to-accent shadow-[0_0_10px_color-mix(in_oklab,var(--t-accent)_50%,transparent)] transition-[width] duration-700 ease-(--ease-spring)"
+          style={{ width: `${habits.length > 0 ? (doneIds.length / habits.length) * 100 : 0}%` }}
+        />
       </div>
 
       <ul className="space-y-2.5">
@@ -65,7 +73,7 @@ export function HabitTracker({ habits, doneIds, onToggle, onAdd, onRemove }: Hab
                 className={`press group flex w-full items-center gap-3.5 rounded-xl border px-4 py-3 text-left ${
                   done
                     ? 'border-accent/50 bg-accent/10'
-                    : 'border-white/[0.05] bg-ink/40 hover:border-accent/30 hover:bg-ink/70'
+                    : 'border-hairline bg-ink/40 hover:border-accent/30 hover:bg-ink/70'
                 } ${pulseId === habit.id && done ? 'animate-reward' : ''}`}
               >
                 <span
@@ -88,7 +96,7 @@ export function HabitTracker({ habits, doneIds, onToggle, onAdd, onRemove }: Hab
                 <span className="min-w-0 flex-1">
                   <span
                     className={`block text-sm font-semibold ${
-                      done ? 'text-white line-through decoration-accent/60' : 'text-slate-200'
+                      done ? 'text-strong line-through decoration-accent/60' : 'text-fg'
                     }`}
                   >
                     {habit.label}
@@ -128,11 +136,11 @@ export function HabitTracker({ habits, doneIds, onToggle, onAdd, onRemove }: Hab
           onChange={(e) => setNewLabel(e.target.value)}
           maxLength={48}
           placeholder="Add your own ritual…"
-          className="min-w-0 flex-1 rounded-xl border border-white/[0.06] bg-ink/60 px-4 py-2.5 text-sm text-slate-100 transition-colors placeholder:text-slate-600 focus:border-accent/60 focus:outline-none focus:ring-2 focus:ring-accent/25"
+          className="min-w-0 flex-1 rounded-xl border border-hairline bg-ink/60 px-4 py-2.5 text-sm text-fg transition-colors placeholder:text-faint focus:border-accent/60 focus:outline-none focus:ring-2 focus:ring-accent/25"
         />
         <button
           type="submit"
-          className="press shrink-0 rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm font-semibold text-slate-300 hover:border-accent/50 hover:text-white"
+          className="press shrink-0 rounded-xl border border-hairline-strong px-4 py-2.5 text-sm font-semibold text-fg hover:border-accent/50 hover:text-strong"
         >
           + Add
         </button>

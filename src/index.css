@@ -1,19 +1,88 @@
 @import 'tailwindcss';
 
-@theme {
-  --color-ink: #04060c;
-  --color-panel: #0a0e17;
-  --color-edge: #161c2b;
-  --color-muted: #8b93a7;
-  --color-accent: #3b82f6;
-  --color-accent-soft: #60a5fa;
-  --color-accent-glow: #22d3ee;
+/* ---------- Theme palettes (runtime-switchable via .light on <html>) ---------- */
+:root {
+  /* Dark "ink edition" of the editorial palette: near-black canvas,
+     steel-navy CTAs, teal highlight. */
+  color-scheme: dark;
+  --t-ink: #090d13;
+  --t-panel: #0e141c;
+  --t-edge: #1d2733;
+  --t-muted: #8b93a7;
+  --t-fg: #cbd5e1;
+  --t-strong: #ffffff;
+  --t-faint: #475569;
+  --t-accent: #4181b8;
+  --t-accent-soft: #6ba3d4;
+  --t-accent-glow: #2dd4bf;
+  --t-hairline: rgb(255 255 255 / 0.06);
+  --t-hairline-strong: rgb(255 255 255 / 0.1);
+  --t-veil: rgb(255 255 255 / 0.04);
+  --t-glow-shadow: 0 0 0 1px rgb(65 129 184 / 0.35), 0 0 40px -10px rgb(65 129 184 / 0.45);
+  --t-card-bg: rgb(10 14 23 / 0.7);
+  --t-card-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.04),
+    0 20px 40px -24px rgb(0 0 0 / 0.8);
+  --t-card-hover-border: rgb(255 255 255 / 0.12);
+  --t-spot: rgb(96 165 250 / 0.08);
+  --t-veil-line: rgb(255 255 255 / 0.03);
+  --t-noise-opacity: 0.04;
+  --t-scrollbar: #1b2333;
+}
 
-  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+.light {
+  /* Editorial magazine palette: warm off-white canvas, charcoal ink,
+     deep navy CTAs, teal highlight — sans-dominant, serif pull quotes. */
+  color-scheme: light;
+  --t-ink: #f7f6f2;
+  --t-panel: #ffffff;
+  --t-edge: #e5e3dc;
+  --t-muted: #6d7178;
+  --t-fg: #3f434c;
+  --t-strong: #15181d;
+  --t-faint: #a3a6ad;
+  --t-accent: #17406b;
+  --t-accent-soft: #2f6394;
+  --t-accent-glow: #0f9d8f;
+  --t-hairline: rgb(23 24 28 / 0.12);
+  --t-hairline-strong: rgb(23 24 28 / 0.18);
+  --t-veil: rgb(23 24 28 / 0.05);
+  --t-glow-shadow: 0 0 0 1px rgb(23 64 107 / 0.18), 0 8px 26px -10px rgb(23 64 107 / 0.35);
+  --t-card-bg: #ffffff;
+  --t-card-shadow:
+    0 1px 2px rgb(23 24 28 / 0.05),
+    0 12px 24px -18px rgb(23 24 28 / 0.18);
+  --t-card-hover-border: rgb(23 24 28 / 0.28);
+  --t-spot: rgb(15 157 143 / 0.07);
+  --t-veil-line: rgb(23 24 28 / 0.05);
+  --t-noise-opacity: 0.025;
+  --t-scrollbar: #d5d2ca;
+}
+
+/* Semantic color tokens resolve their variable at use-time, so utilities
+   like bg-panel/60 or text-strong flip instantly with the theme. */
+@theme inline {
+  --color-ink: var(--t-ink);
+  --color-panel: var(--t-panel);
+  --color-edge: var(--t-edge);
+  --color-muted: var(--t-muted);
+  --color-fg: var(--t-fg);
+  --color-strong: var(--t-strong);
+  --color-faint: var(--t-faint);
+  --color-hairline: var(--t-hairline);
+  --color-hairline-strong: var(--t-hairline-strong);
+  --color-veil: var(--t-veil);
+  --color-accent: var(--t-accent);
+  --color-accent-soft: var(--t-accent-soft);
+  --color-accent-glow: var(--t-accent-glow);
+  --shadow-glow: var(--t-glow-shadow);
+}
+
+@theme {
+  --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-
-  --shadow-glow: 0 0 0 1px rgb(59 130 246 / 0.35), 0 0 40px -10px rgb(59 130 246 / 0.45);
+  --font-quote: 'Instrument Serif', Georgia, serif;
 
   /* Spring physics for tactile interactions */
   --ease-spring: cubic-bezier(0.25, 1, 0.5, 1);
@@ -23,6 +92,9 @@
   --animate-reward: reward 0.55s ease-out;
   --animate-flicker: flicker 1.6s ease-in-out infinite;
   --animate-breathe: breathe 2.4s ease-in-out infinite;
+  --animate-toast-in: toast-in 0.45s var(--ease-spring) both;
+  --animate-view: view-in 0.5s var(--ease-spring) both;
+  --animate-bar-grow: bar-grow 0.9s var(--ease-spring) both;
 
   @keyframes rise {
     from { opacity: 0; transform: translateY(14px); }
@@ -33,8 +105,8 @@
     to { opacity: 1; transform: none; }
   }
   @keyframes reward {
-    0% { box-shadow: 0 0 0 0 rgb(59 130 246 / 0.45); }
-    100% { box-shadow: 0 0 0 16px rgb(59 130 246 / 0); }
+    0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--t-accent) 45%, transparent); }
+    100% { box-shadow: 0 0 0 16px transparent; }
   }
   @keyframes flicker {
     0%, 100% { transform: scale(1); }
@@ -44,33 +116,60 @@
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
   }
-}
-
-:root {
-  color-scheme: dark;
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes view-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.995); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes bar-grow {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
 }
 
 body {
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgb(34 211 238 / 0.08), transparent 60%),
-    radial-gradient(900px 500px at 90% 10%, rgb(59 130 246 / 0.1), transparent 55%),
-    var(--color-ink);
+    radial-gradient(1200px 600px at 50% -10%, color-mix(in oklab, var(--t-accent-glow) 9%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, color-mix(in oklab, var(--t-accent) 10%, transparent), transparent 55%),
+    var(--t-ink);
+  transition: background-color 0.4s ease;
 }
 
 @utility card {
   /* Chamfered hardware panel: translucent hairline border + inset top
      highlight + deep drop shadow instead of a flat solid border. */
+  position: relative;
   border-radius: var(--radius-2xl);
-  border: 1px solid rgb(255 255 255 / 0.06);
-  background: rgb(10 14 23 / 0.7);
+  border: 1px solid var(--t-hairline);
+  background: var(--t-card-bg);
   backdrop-filter: blur(8px);
-  box-shadow:
-    inset 0 1px 0 0 rgb(255 255 255 / 0.04),
-    0 20px 40px -24px rgb(0 0 0 / 0.8);
-  transition: border-color 0.4s var(--ease-spring);
+  box-shadow: var(--t-card-shadow);
+  transition: border-color 0.4s var(--ease-spring), background-color 0.4s ease;
 
   &:hover {
-    border-color: rgb(255 255 255 / 0.12);
+    border-color: var(--t-card-hover-border);
+  }
+
+  /* Cursor spotlight — position fed by a pointermove listener in App */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: radial-gradient(
+      220px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      var(--t-spot),
+      transparent 70%
+    );
+  }
+  &:hover::after {
+    opacity: 1;
   }
 }
 
@@ -87,7 +186,20 @@ body {
   }
 }
 
-/* Aurora glow points behind the hero */
+/* Film-grain overlay */
+.noise {
+  opacity: var(--t-noise-opacity);
+  mix-blend-mode: overlay;
+}
+.light .noise {
+  mix-blend-mode: multiply;
+}
+
+/* Aurora glow points behind the masthead — the container tracks the pointer */
+.aurora {
+  transform: translate3d(calc(var(--px, 0) * 36px), calc(var(--py, 0) * 24px), 0);
+  transition: transform 0.4s ease-out;
+}
 .aurora span {
   position: absolute;
   border-radius: 9999px;
@@ -97,18 +209,21 @@ body {
 }
 .aurora .a1 {
   width: 560px; height: 560px; left: 8%; top: -220px;
-  background: radial-gradient(circle, rgb(59 130 246 / 0.55), transparent 65%);
+  background: radial-gradient(circle, color-mix(in oklab, var(--t-accent) 55%, transparent), transparent 65%);
   animation: drift1 16s ease-in-out infinite alternate;
 }
 .aurora .a2 {
   width: 460px; height: 460px; right: 4%; top: -160px;
-  background: radial-gradient(circle, rgb(34 211 238 / 0.45), transparent 65%);
+  background: radial-gradient(circle, color-mix(in oklab, var(--t-accent-glow) 45%, transparent), transparent 65%);
   animation: drift2 20s ease-in-out infinite alternate;
 }
 .aurora .a3 {
   width: 380px; height: 380px; left: 42%; top: 60px;
-  background: radial-gradient(circle, rgb(99 102 241 / 0.35), transparent 65%);
+  background: radial-gradient(circle, color-mix(in oklab, var(--t-accent-soft) 35%, transparent), transparent 65%);
   animation: drift3 24s ease-in-out infinite alternate;
+}
+.light .aurora span {
+  opacity: 0.22;
 }
 @keyframes drift1 { to { transform: translate(60px, 50px) scale(1.12); } }
 @keyframes drift2 { to { transform: translate(-70px, 40px) scale(0.94); } }
@@ -116,34 +231,82 @@ body {
 
 .grid-veil {
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+    linear-gradient(to right, var(--t-veil-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--t-veil-line) 1px, transparent 1px);
   background-size: 42px 42px;
   mask-image: radial-gradient(closest-side at 50% 40%, black, transparent);
 }
 
-/* Timer ring */
+/* Focus orb: the breathing atmosphere behind the immersive timer */
+.focus-orb {
+  position: absolute;
+  inset: -20%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--t-accent) 28%, transparent),
+    color-mix(in oklab, var(--t-accent-glow) 10%, transparent) 45%,
+    transparent 70%
+  );
+  filter: blur(50px);
+  opacity: 0.5;
+  transform: scale(0.92);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.focus-orb.is-running {
+  opacity: 1;
+  animation: orb-breathe 6s ease-in-out infinite;
+}
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(0.94); opacity: 0.7; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+/* Timer ring — glows while a session runs */
 .timer-ring {
   transform: rotate(-90deg);
+  transition: filter 0.6s ease;
 }
 .timer-ring circle {
   transition: stroke-dashoffset 0.35s linear;
 }
+.timer-ring.is-running {
+  filter: drop-shadow(0 0 14px color-mix(in oklab, var(--t-accent) 55%, transparent));
+}
 
-/* Heatmap cells */
+/* Heatmap cells: staggered entrance, tactile hover, today marker */
 .hm {
   width: 13px;
   height: 13px;
   border-radius: 3px;
   background: #10151f;
+  animation: hm-pop 0.4s var(--ease-spring) both;
+  animation-delay: calc(var(--i, 0) * 6ms);
+  transition: transform 0.2s var(--ease-spring);
 }
-.hm[data-l='1'] { background: #16305e; }
-.hm[data-l='2'] { background: #1d4ea8; }
-.hm[data-l='3'] { background: #3b82f6; box-shadow: 0 0 8px -2px rgb(59 130 246 / 0.7); }
-.hm[data-l='4'] { background: #60c5fa; box-shadow: 0 0 10px -2px rgb(34 211 238 / 0.9); }
+.hm:hover {
+  transform: scale(1.35);
+}
+.hm[data-l='1'] { background: #14333e; }
+.hm[data-l='2'] { background: #16606a; }
+.hm[data-l='3'] { background: #1f9e93; box-shadow: 0 0 8px -2px rgb(45 212 191 / 0.6); }
+.hm[data-l='4'] { background: #5eead4; box-shadow: 0 0 10px -2px rgb(45 212 191 / 0.9); }
+.light .hm { background: #e9e7e1; }
+.light .hm[data-l='1'] { background: #cfe9e5; }
+.light .hm[data-l='2'] { background: #8ed4ca; }
+.light .hm[data-l='3'] { background: #2aa79a; box-shadow: 0 0 8px -2px rgb(15 157 143 / 0.4); }
+.light .hm[data-l='4'] { background: #17406b; box-shadow: 0 0 10px -2px rgb(23 64 107 / 0.45); }
+.hm-today {
+  outline: 1.5px solid color-mix(in oklab, var(--t-accent-glow) 80%, transparent);
+  outline-offset: 1px;
+}
+@keyframes hm-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: #1b2333; border-radius: 999px; }
+::-webkit-scrollbar-thumb { background: var(--t-scrollbar); border-radius: 999px; }
 ::-webkit-scrollbar-track { background: transparent; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -151,5 +314,8 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .aurora {
+    transform: none;
   }
 }
