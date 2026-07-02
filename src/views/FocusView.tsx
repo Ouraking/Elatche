@@ -81,6 +81,12 @@ export function FocusView({
 
       {/* The dial */}
       <div className="relative mt-6 grid h-[22rem] w-[22rem] place-items-center sm:h-[26rem] sm:w-[26rem]">
+        <img
+          src="/images/focus-atmosphere.png"
+          alt=""
+          aria-hidden
+          className={`focus-photo rounded-full ${timer.running ? 'is-running' : ''}`}
+        />
         <div className={`focus-orb ${timer.running ? 'is-running' : ''}`} />
         <svg
           className={`timer-ring absolute inset-0 h-full w-full ${timer.running ? 'is-running' : ''}`}

@@ -65,16 +65,20 @@ export function TodayView({
 
   return (
     <div className="space-y-10">
-      {/* Editorial masthead: greeting + serif quote */}
-      <section ref={headerRef} onPointerMove={handlePointerMove} className="relative isolate overflow-hidden rounded-3xl">
-        <div className="aurora pointer-events-none absolute inset-0">
+      {/* Editorial masthead: cinematic photo + greeting + serif quote */}
+      <section ref={headerRef} onPointerMove={handlePointerMove} className="relative isolate overflow-hidden rounded-3xl border border-hairline">
+        {/* Cinematic mountain-summit backdrop */}
+        <img src="/images/hero-summit.png" alt="" aria-hidden className="hero-photo" />
+        <div className="hero-scrim pointer-events-none absolute inset-0" />
+
+        <div className="aurora pointer-events-none absolute inset-0 opacity-70 mix-blend-screen">
           <span className="a1" />
           <span className="a2" />
           <span className="a3" />
         </div>
-        <div className="grid-veil pointer-events-none absolute inset-0" />
+        <div className="grid-veil pointer-events-none absolute inset-0 opacity-40" />
 
-        <div className="relative animate-rise px-6 pt-12 pb-10 text-center sm:px-10 sm:pt-16 sm:pb-14">
+        <div className="relative animate-rise px-6 pt-16 pb-12 text-center sm:px-10 sm:pt-24 sm:pb-16">
           <span className="inline-flex items-center gap-2 rounded-full border border-hairline bg-panel/60 px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-glow" />
             {greeting} One day at a time.

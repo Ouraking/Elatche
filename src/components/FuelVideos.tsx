@@ -66,18 +66,27 @@ function VideoCard({ video }: { video: Video }) {
 export function FuelVideos() {
   return (
     <section>
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-accent/10 text-accent">
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m22 8-6 4 6 4V8z" />
-              <rect x="2" y="6" width="14" height="12" rx="2" />
-            </svg>
+      {/* Cinematic hero banner */}
+      <div className="relative mb-8 isolate overflow-hidden rounded-3xl border border-hairline">
+        <img
+          src="/images/fuel-hero.png"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-90"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+        <div className="relative px-6 py-14 sm:px-10 sm:py-20">
+          <span className="inline-flex items-center gap-2 rounded-full border border-hairline-strong bg-ink/40 px-3.5 py-1.5 text-xs font-medium text-fg backdrop-blur">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-glow" />
+            Fuel
           </span>
-          <div>
-            <h2 className="font-display text-lg font-semibold text-strong">Fuel</h2>
-            <p className="text-xs text-muted">Watch one. Then close the tab and go do the work.</p>
-          </div>
+          <h2 className="mt-4 max-w-md font-display text-3xl font-bold leading-tight tracking-tight text-strong text-balance sm:text-4xl">
+            Borrow the fire. Then go earn your own.
+          </h2>
+          <p className="mt-3 max-w-sm text-sm text-fg/90 text-pretty">
+            Watch one. Then close the tab and go do the work.
+          </p>
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

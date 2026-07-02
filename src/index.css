@@ -195,6 +195,69 @@ body {
   mix-blend-mode: multiply;
 }
 
+/* ---------- Cinematic photo layers (theme-aware) ---------- */
+/* A photographic hero image that fades into the canvas so overlaid text
+   stays legible in both palettes. Opacity + blend flip with the theme. */
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+  transform: scale(1.02);
+  animation: hero-drift 24s ease-in-out infinite alternate;
+}
+.light .hero-photo {
+  opacity: 0.5;
+}
+@keyframes hero-drift {
+  from { transform: scale(1.02) translateY(0); }
+  to { transform: scale(1.09) translateY(-10px); }
+}
+
+/* Vertical scrim that grounds text against the photo and blends the image
+   edges into the surrounding canvas color. */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom,
+      color-mix(in oklab, var(--t-ink) 35%, transparent) 0%,
+      color-mix(in oklab, var(--t-ink) 55%, transparent) 45%,
+      var(--t-ink) 100%);
+}
+.light .hero-scrim {
+  background:
+    linear-gradient(to bottom,
+      color-mix(in oklab, var(--t-ink) 55%, transparent) 0%,
+      color-mix(in oklab, var(--t-ink) 70%, transparent) 45%,
+      var(--t-ink) 100%);
+}
+
+/* Subtle atmosphere image sitting behind the focus dial */
+.focus-photo {
+  position: absolute;
+  inset: -10%;
+  height: 120%;
+  width: 120%;
+  object-fit: cover;
+  opacity: 0.4;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+.light .focus-photo {
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+}
+.focus-photo.is-running {
+  opacity: 0.7;
+}
+.light .focus-photo.is-running {
+  opacity: 0.32;
+}
+
 /* Aurora glow points behind the masthead — the container tracks the pointer */
 .aurora {
   transform: translate3d(calc(var(--px, 0) * 36px), calc(var(--py, 0) * 24px), 0);
