@@ -1,5 +1,9 @@
 import { DEFAULT_HABITS, DEFAULT_SETTINGS } from '../data';
+import { coerceTheme, type Theme } from '../themes';
 import type { AppState, DayEntry, Habit, Settings, Task } from '../types';
+
+/** Re-exported so existing imports from `services/storage` keep working. */
+export type { Theme };
 
 /**
  * Type-safe localStorage facade. Every read is parsed, validated against a
@@ -122,12 +126,10 @@ export function saveAppState(state: AppState): void {
 
 /* ---------- Theme ---------- */
 
-export type Theme = 'light' | 'dark';
-
 const THEME_KEY = 'elatche.theme';
 
 export function loadTheme(): Theme {
-  return storage.read<Theme>(THEME_KEY, 'light', (v): v is Theme => v === 'light' || v === 'dark');
+  return coerceTheme(storage.read<unknown>(THEME_KEY, null));
 }
 
 export function saveTheme(theme: Theme): void {
@@ -186,7 +188,7 @@ export function parseBackup(json: string): Backup | null {
     return {
       state,
       settings: normalizeSettings(raw.settings),
-      theme: raw.theme === 'dark' ? 'dark' : 'light',
+      theme: coerceTheme(raw.theme),
     };
   } catch {
     return null;

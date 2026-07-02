@@ -30,9 +30,10 @@
   --t-scrollbar: #1b2333;
 }
 
-.light {
-  /* Editorial magazine palette: warm off-white canvas, charcoal ink,
-     deep navy CTAs, teal highlight — sans-dominant, serif pull quotes. */
+/* Paper — editorial magazine palette: warm off-white canvas, charcoal ink,
+   deep navy CTAs, teal highlight. The `.light` class (added by App for any
+   light-mode theme) still drives blend-mode treatments below. */
+[data-theme='paper'] {
   color-scheme: light;
   --t-ink: #f7f6f2;
   --t-panel: #ffffff;
@@ -57,6 +58,90 @@
   --t-veil-line: rgb(23 24 28 / 0.05);
   --t-noise-opacity: 0.025;
   --t-scrollbar: #d5d2ca;
+}
+
+/* Sahel — sun-baked clay, terracotta and millet gold of the Sahel at dusk. */
+[data-theme='sahel'] {
+  color-scheme: dark;
+  --t-ink: #17100b;
+  --t-panel: #211711;
+  --t-edge: #3a2a1e;
+  --t-muted: #b0906f;
+  --t-fg: #ead8c4;
+  --t-strong: #fdf6ee;
+  --t-faint: #6e5442;
+  --t-accent: #c2632a;
+  --t-accent-soft: #e0894a;
+  --t-accent-glow: #f2b134;
+  --t-hairline: rgb(255 240 220 / 0.07);
+  --t-hairline-strong: rgb(255 240 220 / 0.13);
+  --t-veil: rgb(255 240 220 / 0.04);
+  --t-glow-shadow: 0 0 0 1px rgb(194 99 42 / 0.4), 0 0 40px -10px rgb(242 177 52 / 0.45);
+  --t-card-bg: rgb(33 23 17 / 0.72);
+  --t-card-shadow:
+    inset 0 1px 0 0 rgb(255 240 220 / 0.05),
+    0 20px 40px -24px rgb(0 0 0 / 0.8);
+  --t-card-hover-border: rgb(255 240 220 / 0.15);
+  --t-spot: rgb(242 177 52 / 0.1);
+  --t-veil-line: rgb(255 240 220 / 0.04);
+  --t-noise-opacity: 0.05;
+  --t-scrollbar: #3a2a1e;
+}
+
+/* Kente — Ashanti kente cloth: gold and forest green woven on black. */
+[data-theme='kente'] {
+  color-scheme: dark;
+  --t-ink: #0c0f0c;
+  --t-panel: #131813;
+  --t-edge: #26301f;
+  --t-muted: #94a08a;
+  --t-fg: #dbe6d2;
+  --t-strong: #fffdf4;
+  --t-faint: #59674c;
+  --t-accent: #d4a017;
+  --t-accent-soft: #e8c14a;
+  --t-accent-glow: #1f9d55;
+  --t-hairline: rgb(255 255 240 / 0.07);
+  --t-hairline-strong: rgb(255 255 240 / 0.13);
+  --t-veil: rgb(255 255 240 / 0.04);
+  --t-glow-shadow: 0 0 0 1px rgb(212 160 23 / 0.42), 0 0 40px -10px rgb(31 157 85 / 0.42);
+  --t-card-bg: rgb(19 24 19 / 0.72);
+  --t-card-shadow:
+    inset 0 1px 0 0 rgb(255 255 240 / 0.05),
+    0 20px 40px -24px rgb(0 0 0 / 0.85);
+  --t-card-hover-border: rgb(255 255 240 / 0.15);
+  --t-spot: rgb(212 160 23 / 0.1);
+  --t-veil-line: rgb(255 255 240 / 0.04);
+  --t-noise-opacity: 0.05;
+  --t-scrollbar: #26301f;
+}
+
+/* Indigo — Yoruba adire / Tuareg indigo dye, warmed with amber gold. */
+[data-theme='indigo'] {
+  color-scheme: dark;
+  --t-ink: #0b1020;
+  --t-panel: #121a30;
+  --t-edge: #26314f;
+  --t-muted: #909cc0;
+  --t-fg: #cdd6ee;
+  --t-strong: #f4f6ff;
+  --t-faint: #46527a;
+  --t-accent: #4964d6;
+  --t-accent-soft: #7d92ea;
+  --t-accent-glow: #e0a83e;
+  --t-hairline: rgb(220 230 255 / 0.07);
+  --t-hairline-strong: rgb(220 230 255 / 0.13);
+  --t-veil: rgb(220 230 255 / 0.04);
+  --t-glow-shadow: 0 0 0 1px rgb(73 100 214 / 0.42), 0 0 40px -10px rgb(224 168 62 / 0.42);
+  --t-card-bg: rgb(18 26 48 / 0.72);
+  --t-card-shadow:
+    inset 0 1px 0 0 rgb(220 230 255 / 0.05),
+    0 20px 40px -24px rgb(0 0 0 / 0.8);
+  --t-card-hover-border: rgb(220 230 255 / 0.15);
+  --t-spot: rgb(224 168 62 / 0.1);
+  --t-veil-line: rgb(220 230 255 / 0.04);
+  --t-noise-opacity: 0.045;
+  --t-scrollbar: #26314f;
 }
 
 /* Semantic color tokens resolve their variable at use-time, so utilities
@@ -258,6 +343,66 @@ body {
   opacity: 0.32;
 }
 
+/* Theme-tint wash: recolors a photographic layer toward the active accent so
+   the cinematic imagery harmonizes with every palette (blue in Ink, clay in
+   Sahel, gold in Kente…). soft-light preserves the photo's luminance. */
+.hero-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  opacity: 0.85;
+  background: linear-gradient(
+    135deg,
+    var(--t-accent) 0%,
+    color-mix(in oklab, var(--t-accent-glow) 70%, var(--t-accent)) 100%
+  );
+}
+.light .hero-tint {
+  opacity: 0.5;
+}
+
+/* West African woven trim: a slim kente-cloth band used as an editorial
+   accent. The pattern image tiles horizontally; a thin top highlight and the
+   theme accent glow at each end tie it into the palette. */
+.kente-trim {
+  position: relative;
+  height: 12px;
+  width: 100%;
+  background-image: url('/images/pattern-band.png');
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+.kente-trim::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--t-ink),
+    transparent 12%,
+    transparent 88%,
+    var(--t-ink)
+  );
+}
+
+/* A larger mudcloth motif used as a faint texture behind headings. */
+.mud-texture {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/pattern-mud.png');
+  background-size: 320px;
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.light .mud-texture {
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+}
+
 /* Aurora glow points behind the masthead — the container tracks the pointer */
 .aurora {
   transform: translate3d(calc(var(--px, 0) * 36px), calc(var(--py, 0) * 24px), 0);
@@ -342,7 +487,9 @@ body {
   width: 13px;
   height: 13px;
   border-radius: 3px;
-  background: #10151f;
+  /* Level ramp is derived from the active theme's accent tokens, so the
+     heatmap recolors instantly with the palette (teal, gold, terracotta…). */
+  background: color-mix(in oklab, var(--t-strong) 7%, var(--t-panel));
   animation: hm-pop 0.4s var(--ease-spring) both;
   animation-delay: calc(var(--i, 0) * 6ms);
   transition: transform 0.2s var(--ease-spring);
@@ -350,15 +497,16 @@ body {
 .hm:hover {
   transform: scale(1.35);
 }
-.hm[data-l='1'] { background: #14333e; }
-.hm[data-l='2'] { background: #16606a; }
-.hm[data-l='3'] { background: #1f9e93; box-shadow: 0 0 8px -2px rgb(45 212 191 / 0.6); }
-.hm[data-l='4'] { background: #5eead4; box-shadow: 0 0 10px -2px rgb(45 212 191 / 0.9); }
-.light .hm { background: #e9e7e1; }
-.light .hm[data-l='1'] { background: #cfe9e5; }
-.light .hm[data-l='2'] { background: #8ed4ca; }
-.light .hm[data-l='3'] { background: #2aa79a; box-shadow: 0 0 8px -2px rgb(15 157 143 / 0.4); }
-.light .hm[data-l='4'] { background: #17406b; box-shadow: 0 0 10px -2px rgb(23 64 107 / 0.45); }
+.hm[data-l='1'] { background: color-mix(in oklab, var(--t-accent-glow) 24%, var(--t-panel)); }
+.hm[data-l='2'] { background: color-mix(in oklab, var(--t-accent-glow) 50%, var(--t-panel)); }
+.hm[data-l='3'] {
+  background: color-mix(in oklab, var(--t-accent-glow) 78%, var(--t-panel));
+  box-shadow: 0 0 8px -2px color-mix(in oklab, var(--t-accent-glow) 60%, transparent);
+}
+.hm[data-l='4'] {
+  background: var(--t-accent-glow);
+  box-shadow: 0 0 10px -2px color-mix(in oklab, var(--t-accent-glow) 90%, transparent);
+}
 .hm-today {
   outline: 1.5px solid color-mix(in oklab, var(--t-accent-glow) 80%, transparent);
   outline-offset: 1px;

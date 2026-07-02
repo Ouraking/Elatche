@@ -23,8 +23,8 @@ import {
   saveAppState,
   saveSettings,
   saveTheme,
-  type Theme,
 } from './services/storage';
+import { THEMES, themeMeta } from './themes';
 import { ConsistencyView } from './views/ConsistencyView';
 import { FocusView } from './views/FocusView';
 import { TodayView } from './views/TodayView';
@@ -66,14 +66,19 @@ export default function App() {
   }, [settings]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light');
+    const root = document.documentElement;
+    root.setAttribute('data-theme', theme);
+    root.classList.toggle('light', themeMeta(theme).mode === 'light');
     saveTheme(theme);
   }, [theme]);
 
-  const toggleTheme = useCallback(
-    (): void => setTheme((t) => (t === 'light' ? 'dark' : 'light')),
-    [],
-  );
+  /* Cycle to the next theme in the registry (bound to the T hotkey). */
+  const toggleTheme = useCallback((): void => {
+    setTheme((t) => {
+      const i = THEMES.findIndex((x) => x.key === t);
+      return THEMES[(i + 1) % THEMES.length].key;
+    });
+  }, []);
 
   const pushToast = useCallback((text: string): void => {
     const id = ++toastId.current;
