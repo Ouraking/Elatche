@@ -67,9 +67,11 @@ export function TodayView({
     <div className="space-y-10">
       {/* Editorial masthead: cinematic photo + greeting + serif quote */}
       <section ref={headerRef} onPointerMove={handlePointerMove} className="relative isolate overflow-hidden rounded-3xl border border-hairline">
-        {/* Cinematic mountain-summit backdrop */}
+        {/* Cinematic mountain-summit backdrop, tinted to the active theme */}
         <img src="/images/hero-summit.png" alt="" aria-hidden className="hero-photo" />
+        <div className="hero-tint" />
         <div className="hero-scrim pointer-events-none absolute inset-0" />
+        <div className="mud-texture" />
 
         <div className="aurora pointer-events-none absolute inset-0 opacity-70 mix-blend-screen">
           <span className="a1" />
@@ -77,6 +79,9 @@ export function TodayView({
           <span className="a3" />
         </div>
         <div className="grid-veil pointer-events-none absolute inset-0 opacity-40" />
+
+        {/* West African woven trim along the bottom edge */}
+        <div className="kente-trim absolute inset-x-0 bottom-0" />
 
         <div className="relative animate-rise px-6 pt-16 pb-12 text-center sm:px-10 sm:pt-24 sm:pb-16">
           <span className="inline-flex items-center gap-2 rounded-full border border-hairline bg-panel/60 px-3.5 py-1.5 text-xs font-medium text-muted backdrop-blur">

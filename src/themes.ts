@@ -76,5 +76,7 @@ export function coerceTheme(v: unknown): Theme {
   return isTheme(v) ? v : 'ink';
 }
 
+const FALLBACK_THEME = THEMES[0] as ThemeMeta;
+
 export const themeMeta = (key: Theme): ThemeMeta =>
-  THEMES.find((t) => t.key === key) ?? THEMES[0];
+  THEMES.find((t) => t.key === key) ?? FALLBACK_THEME;

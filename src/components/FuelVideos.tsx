@@ -74,8 +74,10 @@ export function FuelVideos() {
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover object-center opacity-90"
         />
+        <div className="hero-tint" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
+        <div className="kente-trim absolute inset-x-0 bottom-0" />
         <div className="relative px-6 py-14 sm:px-10 sm:py-20">
           <span className="inline-flex items-center gap-2 rounded-full border border-hairline-strong bg-ink/40 px-3.5 py-1.5 text-xs font-medium text-fg backdrop-blur">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-glow" />

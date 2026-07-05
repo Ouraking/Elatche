@@ -24,7 +24,7 @@ import {
   saveSettings,
   saveTheme,
 } from './services/storage';
-import { THEMES, themeMeta } from './themes';
+import { THEMES, themeMeta, type Theme } from './themes';
 import { ConsistencyView } from './views/ConsistencyView';
 import { FocusView } from './views/FocusView';
 import { TodayView } from './views/TodayView';
@@ -76,7 +76,8 @@ export default function App() {
   const toggleTheme = useCallback((): void => {
     setTheme((t) => {
       const i = THEMES.findIndex((x) => x.key === t);
-      return THEMES[(i + 1) % THEMES.length].key;
+      const next = THEMES[(i + 1) % THEMES.length];
+      return next ? next.key : t;
     });
   }, []);
 
@@ -346,7 +347,7 @@ export default function App() {
       { id: 'quote', label: 'New quote', hint: 'N', run: nextQuote },
       {
         id: 'theme',
-        label: theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme',
+        label: `Next theme (${themeMeta(theme).name})`,
         hint: 'T',
         run: toggleTheme,
       },
@@ -420,7 +421,7 @@ export default function App() {
           showMiniTimer={view !== 'focus'}
           onMiniTimerClick={() => setView('focus')}
           theme={theme}
-          onToggleTheme={toggleTheme}
+          onSetTheme={setTheme}
         />
 
         <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
