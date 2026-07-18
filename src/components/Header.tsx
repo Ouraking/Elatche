@@ -38,7 +38,12 @@ export function Header({
   return (
     <header className="sticky top-0 z-30 border-b border-hairline bg-ink/70 backdrop-blur-xl">
       <div className="flex items-center gap-4 px-5 py-3 sm:px-8">
-        <span className="font-display text-lg font-bold tracking-tight text-strong md:hidden">Elatche</span>
+        <span className="flex items-center gap-2 md:hidden">
+          <span className="grid h-6 w-6 place-items-center rounded-lg bg-accent/15 ring-1 ring-accent/40">
+            <span className="h-2 w-2 rounded-sm bg-accent shadow-[0_0_10px_2px_color-mix(in_oklab,var(--t-accent)_70%,transparent)]" />
+          </span>
+          <span className="font-display text-lg font-bold tracking-tight text-strong">Elatche</span>
+        </span>
 
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted">Today's Intention</p>

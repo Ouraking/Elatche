@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { VIDEOS } from '../data';
 import type { Video } from '../types';
 
@@ -7,11 +7,14 @@ import type { Video } from '../types';
  * clicked, then swaps in the privacy-enhanced iframe with autoplay. No iframe
  * weight is paid on page load.
  */
-function VideoCard({ video }: { video: Video }) {
+function VideoCard({ video, index }: { video: Video; index: number }) {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <article className="card group overflow-hidden transition-transform duration-500 ease-(--ease-spring) hover:-translate-y-0.5">
+    <article
+      className="card reveal group overflow-hidden transition-transform duration-500 ease-(--ease-spring) hover:-translate-y-1"
+      style={{ '--i': index } as CSSProperties}
+    >
       <div className="relative aspect-video w-full bg-black">
         {playing ? (
           <iframe
@@ -81,8 +84,8 @@ export function FuelVideos() {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {VIDEOS.map((video) => (
-          <VideoCard key={video.id} video={video} />
+        {VIDEOS.map((video, i) => (
+          <VideoCard key={video.id} video={video} index={i} />
         ))}
       </div>
     </section>

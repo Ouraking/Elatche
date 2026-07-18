@@ -92,22 +92,49 @@ export function CommandPalette({ open, commands, onClose }: CommandPaletteProps)
           {matches.length === 0 && (
             <li className="px-3 py-6 text-center text-sm text-muted">Nothing matches "{query}"</li>
           )}
-          {matches.map((command, i) => (
-            <li key={command.id}>
-              <button
-                type="button"
-                onClick={() => runCommand(i)}
-                onMouseEnter={() => setSelected(i)}
-                className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
-                  i === selected ? 'bg-accent/15 text-strong' : 'text-fg'
-                }`}
-              >
-                <span className="font-medium">{command.label}</span>
-                {command.hint && <span className="shrink-0 text-xs text-muted">{command.hint}</span>}
-              </button>
-            </li>
-          ))}
+          {matches.map((command, i) => {
+            const active = i === selected;
+            return (
+              <li key={command.id}>
+                <button
+                  type="button"
+                  onClick={() => runCommand(i)}
+                  onMouseEnter={() => setSelected(i)}
+                  className={`relative flex w-full items-center justify-between gap-3 rounded-lg py-2.5 pl-4 pr-3 text-left text-sm transition-colors ${
+                    active ? 'bg-accent/15 text-strong' : 'text-fg'
+                  }`}
+                >
+                  {active && (
+                    <span className="absolute left-1 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-accent shadow-[0_0_8px_color-mix(in_oklab,var(--t-accent)_70%,transparent)]" />
+                  )}
+                  <span className="font-medium">{command.label}</span>
+                  {command.hint ? (
+                    <span className="shrink-0 rounded border border-hairline-strong bg-ink/60 px-1.5 py-0.5 font-mono text-[10px] text-muted">
+                      {command.hint}
+                    </span>
+                  ) : (
+                    active && (
+                      <span className="shrink-0 font-mono text-[11px] text-accent-soft">⏎</span>
+                    )
+                  )}
+                </button>
+              </li>
+            );
+          })}
         </ul>
+
+        <div className="flex items-center gap-4 border-t border-hairline px-4 py-2 text-[11px] text-muted">
+          <span className="flex items-center gap-1">
+            <kbd className="rounded border border-hairline-strong bg-ink/60 px-1 font-mono">↑</kbd>
+            <kbd className="rounded border border-hairline-strong bg-ink/60 px-1 font-mono">↓</kbd>
+            navigate
+          </span>
+          <span className="flex items-center gap-1">
+            <kbd className="rounded border border-hairline-strong bg-ink/60 px-1 font-mono">⏎</kbd>
+            select
+          </span>
+          <span className="ml-auto font-mono">{matches.length} action{matches.length === 1 ? '' : 's'}</span>
+        </div>
       </div>
     </div>
   );
