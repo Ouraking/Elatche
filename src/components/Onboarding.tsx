@@ -246,6 +246,15 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             </div>
           </div>
         )}
+
+        <p className="mt-12 flex items-center justify-center gap-1.5 text-[11px] font-medium tracking-wide text-faint">
+          <svg className="h-3.5 w-3.5 text-accent/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22V11" />
+            <path d="M12 11C12 7 9 5 5 5c0 4 3 6 7 6z" />
+            <path d="M12 13c0-3 2.5-5 6-5 0 3.5-2.5 5-6 5z" />
+          </svg>
+          Always a product of <span className="text-muted">OuraGrove</span>
+        </p>
       </div>
     </div>
   );
