@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CommandPalette, type Command } from './components/CommandPalette';
 import { FuelVideos } from './components/FuelVideos';
 import { Header } from './components/Header';
+import { Onboarding } from './components/Onboarding';
 import { SettingsPanel } from './components/SettingsPanel';
 import { Sidebar } from './components/Sidebar';
 import { Toasts, type ToastItem } from './components/Toast';
@@ -9,7 +10,7 @@ import { durationsFrom, QUOTES } from './data';
 import { useHotkeys } from './hooks/useHotkeys';
 import { useTimer } from './hooks/useTimer';
 import { useToday } from './hooks/useToday';
-import { toggleAmbient } from './lib/audio';
+import { setAmbient, toggleAmbient, type Soundscape } from './lib/audio';
 import { fireConfetti } from './lib/confetti';
 import { requestNotificationPermission } from './lib/notify';
 import { computeStreak } from './lib/stats';
@@ -17,10 +18,12 @@ import {
   emptyDay,
   exportBackup,
   loadAppState,
+  loadOnboarded,
   loadSettings,
   loadTheme,
   parseBackup,
   saveAppState,
+  saveOnboarded,
   saveSettings,
   saveTheme,
   type Theme,
@@ -49,13 +52,19 @@ export default function App() {
   const [view, setView] = useState<View>('today');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * QUOTES.length));
-  const [ambientOn, setAmbientOn] = useState(false);
+  const [soundscape, setSoundscape] = useState<Soundscape | null>(null);
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [settings, setSettings] = useState<Settings>(loadSettings);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const toastId = useRef(0);
   const today = useToday();
+
+  /* Show the first-run welcome only to genuinely new users — anyone with
+     existing history is treated as already onboarded. */
+  const [onboarded, setOnboarded] = useState<boolean>(
+    () => loadOnboarded() || Object.keys(state.days).length > 0 || state.tasks.length > 0,
+  );
 
   useEffect(() => {
     saveAppState(state);
@@ -284,8 +293,32 @@ export default function App() {
     [pushToast],
   );
 
+  /* ----- Onboarding ----- */
+  const completeOnboarding = useCallback(
+    (intention: string | null): void => {
+      if (intention) updateToday((d) => ({ ...d, intention }));
+      saveOnboarded(true);
+      setOnboarded(true);
+    },
+    [updateToday],
+  );
+
+  const replayWelcome = useCallback((): void => {
+    setSettingsOpen(false);
+    saveOnboarded(false);
+    setOnboarded(false);
+  }, []);
+
   /* ----- Ambience & quotes ----- */
-  const handleToggleAmbient = useCallback((): void => setAmbientOn(toggleAmbient()), []);
+  /** Pick a soundscape (or null to silence). Selecting the active one toggles it off. */
+  const selectSoundscape = useCallback(
+    (kind: Soundscape | null): void => setSoundscape(setAmbient(kind)),
+    [],
+  );
+  const handleToggleAmbient = useCallback(
+    (): void => setSoundscape(toggleAmbient() ? 'brown' : null),
+    [],
+  );
 
   const nextQuote = useCallback((): void => setQuoteIndex((i) => randomQuoteIndex(i)), []);
 
@@ -335,7 +368,7 @@ export default function App() {
       { id: 'go-fuel', label: 'Go to Fuel', hint: '4', run: () => setView('fuel') },
       {
         id: 'ambient',
-        label: ambientOn ? 'Turn ambient sound off' : 'Turn ambient sound on',
+        label: soundscape ? 'Turn ambient sound off' : 'Turn ambient sound on',
         run: handleToggleAmbient,
       },
       { id: 'quote', label: 'New quote', hint: 'N', run: nextQuote },
@@ -373,7 +406,7 @@ export default function App() {
   }, [
     timer,
     startAndEnterFocus,
-    ambientOn,
+    soundscape,
     handleToggleAmbient,
     nextQuote,
     theme,
@@ -391,7 +424,8 @@ export default function App() {
 
   return (
     <div id="top" className="min-h-screen font-sans text-fg antialiased selection:bg-accent/30 selection:text-strong">
-      {/* Atmospheric noise overlay */}
+      {/* Cinematic edge vignette + atmospheric film grain */}
+      <div aria-hidden className="vignette pointer-events-none fixed inset-0 z-40" />
       <div
         aria-hidden
         className="noise pointer-events-none fixed inset-0 z-40"
@@ -450,8 +484,10 @@ export default function App() {
                 focusTask={focusTask}
                 onCompleteTask={completeFocusTask}
                 sessionsToday={day.sessions}
-                ambientOn={ambientOn}
-                onToggleAmbient={handleToggleAmbient}
+                goalMin={settings.dailyGoalMin}
+                focusMinToday={day.focusMin}
+                soundscape={soundscape}
+                onSelectSoundscape={selectSoundscape}
               />
             )}
             {view === 'consistency' && <ConsistencyView days={state.days} />}
@@ -474,9 +510,12 @@ export default function App() {
         onToggleNotify={handleToggleNotify}
         onExport={handleExport}
         onImport={handleImport}
+        onReplayWelcome={replayWelcome}
         onClose={() => setSettingsOpen(false)}
       />
       <Toasts items={toasts} />
+
+      {!onboarded && <Onboarding onComplete={completeOnboarding} />}
     </div>
   );
 }

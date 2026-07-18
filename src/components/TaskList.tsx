@@ -23,7 +23,7 @@ export function TaskList({ tasks, focusTaskId, onAdd, onToggle, onRemove, onFocu
   };
 
   return (
-    <article className="card p-6 sm:p-7 lg:col-span-2">
+    <article className="card p-6 sm:p-7">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-accent/10 text-accent">
@@ -44,9 +44,14 @@ export function TaskList({ tasks, focusTaskId, onAdd, onToggle, onRemove, onFocu
       </div>
 
       {tasks.length === 0 && (
-        <p className="mb-4 rounded-xl border border-dashed border-hairline-strong px-4 py-6 text-center text-sm text-muted">
-          Queue is empty. Add the work that matters, then hit play on one.
-        </p>
+        <div className="mb-4 flex flex-col items-center gap-2 rounded-xl border border-dashed border-hairline-strong px-4 py-7 text-center">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-accent/10 text-accent">
+            <svg className="h-4 w-4 translate-x-[1px]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+          <p className="text-sm text-muted">Queue is empty. Add the work that matters, then hit play on one.</p>
+        </div>
       )}
 
       <ul className="space-y-2">

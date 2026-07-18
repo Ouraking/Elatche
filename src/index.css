@@ -28,6 +28,8 @@
   --t-veil-line: rgb(255 255 255 / 0.03);
   --t-noise-opacity: 0.04;
   --t-scrollbar: #1b2333;
+  --t-vignette: rgb(2 4 8 / 0.55);
+  --t-gradient-text: linear-gradient(120deg, var(--t-strong) 0%, var(--t-accent-soft) 55%, var(--t-accent-glow) 100%);
 }
 
 .light {
@@ -57,6 +59,8 @@
   --t-veil-line: rgb(23 24 28 / 0.05);
   --t-noise-opacity: 0.025;
   --t-scrollbar: #d5d2ca;
+  --t-vignette: rgb(23 24 28 / 0.06);
+  --t-gradient-text: linear-gradient(120deg, var(--t-strong) 0%, var(--t-accent) 55%, var(--t-accent-glow) 105%);
 }
 
 /* Semantic color tokens resolve their variable at use-time, so utilities
@@ -84,8 +88,12 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
   --font-quote: 'Instrument Serif', Georgia, serif;
 
-  /* Spring physics for tactile interactions */
+  /* Motion curves — spring for tactile presses, quart/expo for reveals,
+     back for a subtle confident overshoot on entrances. */
   --ease-spring: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-quart: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-back: cubic-bezier(0.34, 1.42, 0.6, 1);
 
   --animate-rise: rise 0.6s var(--ease-spring) both;
   --animate-fade-swap: fade-swap 0.5s ease both;
@@ -93,8 +101,13 @@
   --animate-flicker: flicker 1.6s ease-in-out infinite;
   --animate-breathe: breathe 2.4s ease-in-out infinite;
   --animate-toast-in: toast-in 0.45s var(--ease-spring) both;
-  --animate-view: view-in 0.5s var(--ease-spring) both;
+  --animate-view: view-in 0.55s var(--ease-quart) both;
   --animate-bar-grow: bar-grow 0.9s var(--ease-spring) both;
+  --animate-reveal: reveal 0.6s var(--ease-back) both;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-sheen: sheen 2.6s ease-in-out infinite;
+  --animate-ring-spin: ring-spin 26s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.8s ease-out infinite;
 
   @keyframes rise {
     from { opacity: 0; transform: translateY(14px); }
@@ -128,14 +141,112 @@
     from { transform: scaleY(0); }
     to { transform: scaleY(1); }
   }
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(18px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes sheen {
+    0% { transform: translateX(-120%); }
+    60%, 100% { transform: translateX(320%); }
+  }
+  @keyframes ring-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.9); opacity: 0.55; }
+    70% { opacity: 0; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
 }
 
 body {
   background:
     radial-gradient(1200px 600px at 50% -10%, color-mix(in oklab, var(--t-accent-glow) 9%, transparent), transparent 60%),
-    radial-gradient(900px 500px at 90% 10%, color-mix(in oklab, var(--t-accent) 10%, transparent), transparent 55%),
+    radial-gradient(900px 500px at 90% 8%, color-mix(in oklab, var(--t-accent) 10%, transparent), transparent 55%),
+    radial-gradient(1000px 700px at 5% 100%, color-mix(in oklab, var(--t-accent-soft) 7%, transparent), transparent 55%),
     var(--t-ink);
   transition: background-color 0.4s ease;
+}
+
+/* Cinematic edge vignette — a fixed frame that gently darkens the corners so
+   the eye settles toward the working center. Non-interactive, theme-aware. */
+.vignette {
+  background: radial-gradient(130% 130% at 50% -5%, transparent 58%, var(--t-vignette) 100%);
+}
+
+/* Accent-gradient display text for cinematic headings. */
+.text-gradient {
+  background: var(--t-gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Entrance reveal — reads --i off the element for a wave-staggered cascade.
+   Pair with style={{ '--i': n }} on staggered children. */
+.reveal {
+  animation: reveal 0.6s var(--ease-back) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* Sweeping specular highlight for progress fills — a thin light streak that
+   travels along a filled bar to signal live momentum. */
+.progress-sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.progress-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 34%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--t-strong) 55%, transparent),
+    transparent
+  );
+  animation: sheen 2.6s var(--ease-quart) infinite;
+}
+
+/* Rotating conic aura behind the focus dial — slow, weightless, alive. */
+.focus-aura {
+  position: absolute;
+  inset: -8%;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in oklab, var(--t-accent-glow) 40%, transparent) 90deg,
+    transparent 160deg,
+    color-mix(in oklab, var(--t-accent) 34%, transparent) 260deg,
+    transparent 340deg
+  );
+  filter: blur(34px);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  animation: ring-spin 26s linear infinite;
+}
+.focus-aura.is-running {
+  opacity: 0.9;
+}
+
+/* Breathing guide ring used during a running focus session. */
+.breath-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklab, var(--t-accent) 40%, transparent);
+  animation: pulse-ring 4s var(--ease-quart) infinite;
 }
 
 @utility card {
@@ -147,10 +258,32 @@ body {
   background: var(--t-card-bg);
   backdrop-filter: blur(8px);
   box-shadow: var(--t-card-shadow);
-  transition: border-color 0.4s var(--ease-spring), background-color 0.4s ease;
+  transition:
+    border-color 0.4s var(--ease-spring),
+    box-shadow 0.5s var(--ease-quart),
+    transform 0.5s var(--ease-quart),
+    background-color 0.4s ease;
+
+  /* Light-catching top edge — a thin gradient hairline that reads as a
+     bevel under the ambient glow. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--t-strong) 7%, transparent),
+      transparent 22%
+    );
+    opacity: 0.6;
+    mask: linear-gradient(#000, transparent 40%);
+  }
 
   &:hover {
     border-color: var(--t-card-hover-border);
+    box-shadow: var(--t-card-shadow), var(--t-glow-shadow);
   }
 
   /* Cursor spotlight — position fed by a pointermove listener in App */

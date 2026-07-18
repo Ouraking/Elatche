@@ -17,8 +17,13 @@ export function Toasts({ items }: ToastsProps) {
       {items.map((toast) => (
         <div
           key={toast.id}
-          className="animate-toast-in rounded-xl border border-accent/30 bg-panel/90 px-4 py-2.5 text-sm font-medium text-fg shadow-glow backdrop-blur"
+          className="animate-toast-in flex items-center gap-2.5 rounded-xl border border-accent/30 bg-panel/90 py-2.5 pl-3 pr-4 text-sm font-medium text-fg shadow-glow backdrop-blur"
         >
+          <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent/15 text-accent">
+            <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </span>
           {toast.text}
         </div>
       ))}

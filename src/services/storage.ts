@@ -134,6 +134,19 @@ export function saveTheme(theme: Theme): void {
   storage.write(THEME_KEY, theme);
 }
 
+/* ---------- First-run onboarding ---------- */
+
+const ONBOARDED_KEY = 'elatche.onboarded';
+
+/** True once the user has completed (or skipped) the first-run welcome. */
+export function loadOnboarded(): boolean {
+  return storage.read<boolean>(ONBOARDED_KEY, false, (v): v is boolean => typeof v === 'boolean');
+}
+
+export function saveOnboarded(done: boolean): void {
+  storage.write(ONBOARDED_KEY, done);
+}
+
 /* ---------- Settings ---------- */
 
 const SETTINGS_KEY = 'elatche.settings';
